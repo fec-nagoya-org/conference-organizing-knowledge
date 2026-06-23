@@ -1,0 +1,13 @@
+{
+  "name": "conference-organizing-knowledge",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "カンファレンス開催ノウハウをClaude Codeスキルとして提供するプラグイン",
+  "scripts": {
+    "fetch": "node scripts/fetch-docs.mjs"
+  },
+  "dependencies": {
+    "turndown": "^7.2.0"
+  }
+}
