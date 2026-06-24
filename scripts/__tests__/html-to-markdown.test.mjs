@@ -4,6 +4,8 @@ import {
 	cleanHtml,
 	cleanMarkdown,
 	convertHtmlToMarkdown,
+	pageSlug,
+	splitMarkdownByPages,
 	stripHeader,
 } from "../html-to-markdown.mjs";
 
@@ -91,6 +93,16 @@ describe("cleanMarkdown", () => {
 		const md = "line1\n   \nline2";
 		expect(cleanMarkdown(md)).toBe("line1\n\nline2");
 	});
+
+	it("箇条書きの余分なスペースを正規化する", () => {
+		const md = "-   item1\n-   item2";
+		expect(cleanMarkdown(md)).toBe("- item1\n- item2");
+	});
+
+	it("番号付きリストの余分なスペースを正規化する", () => {
+		const md = "1.  first\n2.  second\n10.  tenth";
+		expect(cleanMarkdown(md)).toBe("1. first\n2. second\n10. tenth");
+	});
 });
 
 describe("convertHtmlToMarkdown", () => {
@@ -152,6 +164,85 @@ describe("stripHeader", () => {
 
 	it("ヘッダーがない場合はそのまま返す", () => {
 		expect(stripHeader("# Content")).toBe("# Content");
+	});
+});
+
+describe("splitMarkdownByPages", () => {
+	it("絵文字ページマーカーでmarkdownを分割する", () => {
+		const md = [
+			"📔 Intro",
+			"",
+			"📔 カンファレンス開催ノウハウ",
+			"",
+			"# 開催ノウハウの継承",
+			"",
+			"コロナ禍により...",
+			"",
+			"📅 スケジュール感",
+			"",
+			"スケジュール感",
+			"",
+			"小さい勉強会であれば...",
+		].join("\n");
+
+		const pages = splitMarkdownByPages(md);
+
+		expect(pages).toHaveLength(3);
+		expect(pages[0].title).toBe("Intro");
+		expect(pages[0].slug).toBe("intro");
+		expect(pages[0].content).toBe("");
+		expect(pages[1].title).toBe("カンファレンス開催ノウハウ");
+		expect(pages[1].slug).toBe("カンファレンス開催ノウハウ");
+		expect(pages[1].content).toContain("# 開催ノウハウの継承");
+		expect(pages[2].title).toBe("スケジュール感");
+		expect(pages[2].slug).toBe("スケジュール感");
+		expect(pages[2].content).toContain("小さい勉強会であれば...");
+	});
+
+	it("合成絵文字のページマーカーを処理する", () => {
+		const md = [
+			"🧑‍💻 サイト作成",
+			"",
+			"サイト作成の内容",
+			"",
+			"🗣️ 同時通訳",
+			"",
+			"同時通訳の内容",
+		].join("\n");
+
+		const pages = splitMarkdownByPages(md);
+
+		expect(pages).toHaveLength(2);
+		expect(pages[0].title).toBe("サイト作成");
+		expect(pages[1].title).toBe("同時通訳");
+	});
+
+	it("ページマーカーがない場合は空配列を返す", () => {
+		const md = "# ただの見出し\n\n本文テキスト";
+		const pages = splitMarkdownByPages(md);
+		expect(pages).toHaveLength(0);
+	});
+});
+
+describe("pageSlug", () => {
+	it("英語タイトルをlowercaseスラグに変換する", () => {
+		expect(pageSlug("Intro")).toBe("intro");
+	});
+
+	it("日本語タイトルをそのまま返す", () => {
+		expect(pageSlug("スケジュール感")).toBe("スケジュール感");
+	});
+
+	it("スペースをハイフンに変換する", () => {
+		expect(pageSlug("Code of conduct")).toBe("code-of-conduct");
+	});
+
+	it("ハイフンを含むタイトルを処理する", () => {
+		expect(pageSlug("Wi-Fi")).toBe("wi-fi");
+	});
+
+	it("CFPのような略語を処理する", () => {
+		expect(pageSlug("CFP")).toBe("cfp");
 	});
 });
 
