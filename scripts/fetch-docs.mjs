@@ -1,7 +1,12 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import TurndownService from "turndown";
+import {
+	buildExportUrl,
+	buildHeader,
+	convertHtmlToMarkdown,
+	stripHeader,
+} from "./html-to-markdown.mjs";
 
 const DOCUMENT_ID = "1b0GAEADYCefXw4GZNTO6mktZDhZ-hno7QIziqh54W4I";
 const API_KEY = process.env.GOOGLE_API_KEY;
@@ -16,9 +21,7 @@ const outputPath = join(
 	"conference-organizing.md",
 );
 
-const exportUrl = API_KEY
-	? `https://www.googleapis.com/drive/v3/files/${DOCUMENT_ID}/export?mimeType=text/html&key=${API_KEY}`
-	: `https://docs.google.com/document/d/${DOCUMENT_ID}/export?format=html`;
+const exportUrl = buildExportUrl(DOCUMENT_ID, API_KEY);
 
 console.log(
 	`Fetching document ${API_KEY ? "via Drive API" : "via public export URL"}...`,
@@ -35,65 +38,22 @@ if (!response.ok) {
 	process.exit(1);
 }
 
-let html = await response.text();
+const html = await response.text();
 console.log(`Fetched HTML: ${html.length} chars`);
 
-html = html.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "");
-html = html.replace(/<img[^>]*>/gi, "");
-html = html.replace(/\s+(class|style|id)="[^"]*"/gi, "");
-html = html.replace(/\s+(class|style|id)='[^']*'/gi, "");
-
-html = html.replace(
-	/https:\/\/www\.google\.com\/url\?q=(.*?)&(?:amp;)?sa=D[^"']*/gi,
-	(_, encodedUrl) => decodeURIComponent(encodedUrl),
-);
-
-const bodyMatch = html.match(/<body[^>]*>([\s\S]*)<\/body>/i);
-if (bodyMatch) {
-	html = bodyMatch[1];
-}
-
-console.log(`Cleaned HTML: ${html.length} chars`);
-
-const turndown = new TurndownService({
-	headingStyle: "atx",
-	codeBlockStyle: "fenced",
-	bulletListMarker: "-",
-});
-
-turndown.addRule("removeEmptyLinks", {
-	filter: (node) => node.nodeName === "A" && !node.getAttribute("href"),
-	replacement: () => "",
-});
-
-turndown.addRule("skipImages", {
-	filter: "img",
-	replacement: () => "",
-});
-
-let markdown = turndown.turndown(html);
-
-markdown = markdown.replace(/!\[[^\]]*\]\(data:image[^)]*\)/g, "");
-markdown = markdown.replace(/\n{3,}/g, "\n\n");
-markdown = markdown.replace(/\[\s*\]\(\)/g, "");
-markdown = markdown.replace(/^[\s​]+$/gm, "");
-
-const header = `<!-- このファイルはGoogle Docsから自動生成されています。直接編集しないでください。 -->
-<!-- 出典: https://docs.google.com/document/d/${DOCUMENT_ID} -->
-<!-- 最終更新: ${new Date().toISOString()} -->
-
-`;
+const markdown = convertHtmlToMarkdown(html);
+const header = buildHeader(DOCUMENT_ID);
+const output = header + markdown;
 
 let existing = "";
 try {
 	existing = readFileSync(outputPath, "utf-8");
 } catch {}
 
-const stripHeader = (s) => s.replace(/^<!--[\s\S]*?-->\n\n/m, "");
-if (stripHeader(existing) === stripHeader(header + markdown)) {
+if (stripHeader(existing) === stripHeader(output)) {
 	console.log("No content changes detected, skipping write.");
 	process.exit(0);
 }
 
-writeFileSync(outputPath, header + markdown, "utf-8");
-console.log(`Written: ${outputPath} (${(header + markdown).length} chars)`);
+writeFileSync(outputPath, output, "utf-8");
+console.log(`Written: ${outputPath} (${output.length} chars)`);

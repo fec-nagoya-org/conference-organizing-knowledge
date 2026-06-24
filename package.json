@@ -9,10 +9,12 @@
   "scripts": {
     "fetch": "bun run scripts/fetch-docs.mjs",
     "check": "biome check --write .",
+    "test": "vitest run",
     "validate": "claude plugin validate --strict ."
   },
   "type": "module",
   "devDependencies": {
-    "@biomejs/biome": "^2.5.1"
+    "@biomejs/biome": "^2.5.1",
+    "vitest": "^4.1.9"
   }
 }
