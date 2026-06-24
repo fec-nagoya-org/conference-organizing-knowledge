@@ -7,7 +7,7 @@ pre-commit:
       glob: "*.{js,mjs,ts,json}"
       run: bun run check
     skill-md-exists:
-      run: test -f skills/conference-organizing-knowledge/SKILL.md
+      run: test -f skills/conference-organizing-knowledge-skill/SKILL.md
     marketplace-json-valid:
       run: python3 -c "import json; json.load(open('.claude-plugin/marketplace.json'))"
 

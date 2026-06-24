@@ -1,5 +1,5 @@
 {
-  "name": "conference-organizing-knowledge",
+  "name": "conference-organizing-knowledge-skill",
   "version": "1.0.0",
   "description": "Google Docsとして公開されている「カンファレンス開催ノウハウ」をSkill化して公開しているプラグイン。3日ごとに自動同期される。",
   "author": {

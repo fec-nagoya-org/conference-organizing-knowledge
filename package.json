@@ -1,5 +1,5 @@
 {
-  "name": "conference-organizing-knowledge",
+  "name": "conference-organizing-knowledge-skill",
   "version": "1.0.0",
   "dependencies": {
     "turndown": "^7.2.0"

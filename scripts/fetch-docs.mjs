@@ -16,7 +16,7 @@ const outputPath = join(
 	__dirname,
 	"..",
 	"skills",
-	"conference-organizing-knowledge",
+	"conference-organizing-knowledge-skill",
 	"references",
 	"conference-organizing.md",
 );

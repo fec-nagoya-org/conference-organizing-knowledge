@@ -1,6 +1,6 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "conference-organizing-knowledge",
+  "name": "conference-organizing-knowledge-skill",
   "description": "Google Docsとして公開されている「カンファレンス開催ノウハウ」をSkill化して公開しているマーケットプレイス",
   "owner": {
     "name": "fec-nagoya-org",
@@ -8,7 +8,7 @@
   },
   "plugins": [
     {
-      "name": "conference-organizing-knowledge",
+      "name": "conference-organizing-knowledge-skill",
       "description": "Google Docsとして公開されている「カンファレンス開催ノウハウ」をSkill化して公開しているプラグイン。3日ごとに自動同期される。",
       "author": {
         "name": "fec-nagoya-org"
