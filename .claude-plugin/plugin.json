@@ -1,7 +1,7 @@
 {
   "name": "conference-organizing-knowledge",
   "version": "1.0.0",
-  "description": "カンファレンス・技術イベント開催のノウハウを提供するプラグイン。会場選定、スケジュール設計、スポンサー対応、CFP運営、スタッフ管理など、主催に関わるあらゆる知見を参照できる。",
+  "description": "Google Docsとして公開されている「カンファレンス開催ノウハウ」をSkill化して公開しているプラグイン。3日ごとに自動同期される。",
   "author": {
     "name": "fec-nagoya-org",
     "email": "satake.satake.y@gmail.com"

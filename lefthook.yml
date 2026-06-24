@@ -5,7 +5,7 @@ pre-commit:
       run: claude plugin validate --strict .
     biome-check:
       glob: "*.{js,mjs,ts,json}"
-      run: bun run lint
+      run: bun run check
     skill-md-exists:
       run: test -f skills/conference-organizing-knowledge/SKILL.md
     marketplace-json-valid:

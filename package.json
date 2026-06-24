@@ -1,19 +1,18 @@
 {
   "name": "conference-organizing-knowledge",
   "version": "1.0.0",
-  "private": true,
-  "type": "module",
-  "description": "カンファレンス開催ノウハウをClaude Codeスキルとして提供するプラグイン",
-  "scripts": {
-    "fetch": "bun run scripts/fetch-docs.mjs",
-    "lint": "biome check .",
-    "lint:fix": "biome check --write .",
-    "validate": "claude plugin validate --strict ."
-  },
   "dependencies": {
     "turndown": "^7.2.0"
   },
+  "description": "カンファレンス開催ノウハウをClaude Codeスキルとして提供するプラグイン",
+  "private": true,
+  "scripts": {
+    "fetch": "bun run scripts/fetch-docs.mjs",
+    "check": "biome check --write .",
+    "validate": "claude plugin validate --strict ."
+  },
+  "type": "module",
   "devDependencies": {
-    "@biomejs/biome": "^1.9.0"
+    "@biomejs/biome": "^2.5.1"
   }
 }
